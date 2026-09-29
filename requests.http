@@ -1,0 +1,66 @@
+### Ejemplos para el cliente HTTP de IntelliJ (o la extensión REST Client de VS Code)
+@host = http://localhost:8080
+@apiKey = 123456
+
+### 1. Listar todas las pólizas
+GET {{host}}/polizas
+x-api-key: {{apiKey}}
+
+### 1b. Listar pólizas colectivas vigentes
+GET {{host}}/polizas?tipo=COLECTIVA&estado=VIGENTE
+x-api-key: {{apiKey}}
+
+### 2. Riesgos de la póliza colectiva (id 2)
+GET {{host}}/polizas/2/riesgos
+x-api-key: {{apiKey}}
+
+### 3. Renovar la póliza individual (id 1)
+POST {{host}}/polizas/1/renovar
+x-api-key: {{apiKey}}
+
+### 3b. Renovar una póliza cancelada (id 3) -> 409
+POST {{host}}/polizas/3/renovar
+x-api-key: {{apiKey}}
+
+### 5. Agregar riesgo a la colectiva (id 2) -> 201
+POST {{host}}/polizas/2/riesgos
+x-api-key: {{apiKey}}
+Content-Type: application/json
+
+{
+  "direccionInmueble": "Calle 100 # 15-20, Bogotá",
+  "arrendatario": "Camila Torres",
+  "arrendador": "Felipe Rojas"
+}
+
+### 5b. Agregar riesgo a una individual (id 1) -> 422
+POST {{host}}/polizas/1/riesgos
+x-api-key: {{apiKey}}
+Content-Type: application/json
+
+{
+  "direccionInmueble": "Otra dirección",
+  "arrendatario": "Otro",
+  "arrendador": "Otro"
+}
+
+### 6. Cancelar un riesgo de la colectiva (id 2)
+POST {{host}}/riesgos/2/cancelar
+x-api-key: {{apiKey}}
+
+### 4. Cancelar la póliza colectiva (id 2) y todos sus riesgos
+POST {{host}}/polizas/2/cancelar
+x-api-key: {{apiKey}}
+
+### Mock del CORE
+POST {{host}}/core-mock/evento
+x-api-key: {{apiKey}}
+Content-Type: application/json
+
+{
+  "evento": "ACTUALIZACION",
+  "polizaId": 555
+}
+
+### Sin API key -> 401
+GET {{host}}/polizas
